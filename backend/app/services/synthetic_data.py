@@ -7,7 +7,8 @@ from app.models.user import User, UserRole
 from app.models.security_log import SecurityLog, EventType
 from app.models.alert import SecurityAlert, AlertSeverity
 from app.models.incident import Incident, IncidentStatus, IncidentSeverity
-from app.core.security import hash_password
+from app.core.security import hash_password, verify_password
+from app.config import settings
 from app.services.threat_engine import threat_engine
 
 
@@ -29,7 +30,7 @@ class SyntheticSecuritySimulator:
                 "full_name": "Chief Security Officer",
                 "department": "Security Operations & IT",
                 "role": UserRole.ADMIN,
-                "password": "REMOVED-SYNTHETIC-DEMO-CREDENTIAL",
+                "password": settings.DEMO_ADMIN_PASSWORD,
             },
             {
                 "username": "analyst_jane",
@@ -37,7 +38,7 @@ class SyntheticSecuritySimulator:
                 "full_name": "Jane Chen (Lead SOC Analyst)",
                 "department": "Security Operations Center",
                 "role": UserRole.SECURITY_ANALYST,
-                "password": "REMOVED-SYNTHETIC-DEMO-CREDENTIAL",
+                "password": settings.DEMO_ANALYST_PASSWORD,
             },
             {
                 "username": "john_doe",
@@ -45,7 +46,7 @@ class SyntheticSecuritySimulator:
                 "full_name": "John Doe",
                 "department": "Software Engineering",
                 "role": UserRole.EMPLOYEE,
-                "password": "REMOVED-SYNTHETIC-DEMO-CREDENTIAL",
+                "password": settings.DEMO_EMPLOYEE_PASSWORD,
             },
             {
                 "username": "sarah_connor",
@@ -53,7 +54,7 @@ class SyntheticSecuritySimulator:
                 "full_name": "Sarah Connor",
                 "department": "Infrastructure & Cloud",
                 "role": UserRole.EMPLOYEE,
-                "password": "REMOVED-SYNTHETIC-DEMO-CREDENTIAL",
+                "password": settings.DEMO_EMPLOYEE_PASSWORD,
             },
         ]
 
@@ -73,6 +74,11 @@ class SyntheticSecuritySimulator:
                 )
                 db.add(user)
                 created_users.append(u_data["username"])
+            elif not verify_password(u_data["password"], existing.hashed_password):
+                existing.hashed_password = hash_password(u_data["password"])
+                existing.failed_login_attempts = 0
+                existing.is_locked = False
+                existing.lockout_until = None
         db.commit()
 
         # 2. Seed Baseline Normal Logs if empty

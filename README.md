@@ -14,8 +14,9 @@ An identity security platform for managing users and access while monitoring sec
 ## Tech stack
 
 - **Backend:** Python, FastAPI, SQLAlchemy, Pydantic
-- **Database:** SQLite by default; PostgreSQL is supported.
+- **Database:** SQLite for local zero-setup development and tests; PostgreSQL for the Docker Compose deployment.
 - **Frontend:** React, Vite, Tailwind CSS
+- **Containers:** Docker Compose, PostgreSQL, Nginx
 
 ## Requirements
 
@@ -26,7 +27,14 @@ An identity security platform for managing users and access while monitoring sec
 
 ### Backend
 
-In a terminal, change to the `backend` directory and run:
+For local development, create a private backend environment file from the example and replace all placeholders, including the three distinct demo passwords (at least 12 characters each). From the repository root:
+
+```powershell
+Copy-Item .env.example backend\.env
+notepad backend\.env
+```
+
+Save the file, then change to the `backend` directory and run:
 
 ```powershell
 python -m venv .venv
@@ -48,21 +56,55 @@ npm install
 npm run dev
 ```
 
-Vite prints the local frontend URL when it starts. The frontend expects the API at `http://127.0.0.1:8000/api/v1`.
+Vite prints the local frontend URL when it starts. The frontend sends API requests to `/api/v1`; the Vite development proxy forwards them to `http://127.0.0.1:8000`.
 
 ## Run backend tests
 
 From the `backend` directory:
 
 ```powershell
-pytest
+.\.venv\Scripts\python.exe -m pytest
 ```
+
+The test configuration reports statement coverage by module and enforces an 80% minimum. The test database is an isolated in-memory SQLite database; PostgreSQL is used by the Docker Compose application deployment.
+
+## Run with Docker Compose (PostgreSQL)
+
+Install Docker Desktop, then from the repository root copy `.env.example` to `.env` and replace every placeholder. Set a PostgreSQL password and JWT secret, plus three distinct demo-account passwords of at least 12 characters each. Use URL-safe letters and digits for the PostgreSQL password because it is embedded in `DATABASE_URL`. Keep `.env` private and do not commit it.
+
+```powershell
+Copy-Item .env.example .env
+docker compose up --build
+```
+
+Open the frontend at `http://localhost:8081`, the API docs at `http://localhost:8000/docs`, and the health check at `http://localhost:8000/health`. Compose waits for PostgreSQL and the backend health check before starting dependent services. The database uses a named volume and persists across container restarts.
+
+To stop the services while retaining database data, press `Ctrl+C` and run `docker compose down`. To remove the local database volume as well, use `docker compose down -v`; this permanently deletes the Compose database.
+
+## Functional demonstration
+
+1. Sign in with a locally seeded demo account using the password you configured in the private environment file. Demo usernames are `admin`, `analyst_jane`, and `john_doe`.
+2. Verify role-based access by inspecting the dashboard and user/incident pages. Sign in as the analyst or employee demo role to compare permissions.
+3. Use **Attack Simulator** to generate a brute-force, impossible-travel, or privilege-escalation scenario.
+4. Review the generated security events, alerts, and incidents in the dashboard and incident pages.
+5. Test session management by signing out, signing back in, and using the session list/revocation controls.
+
+The demo accounts and generated activity are synthetic and are not suitable for real accounts or production use. Configure three distinct passwords of at least 12 characters using `DEMO_ADMIN_PASSWORD`, `DEMO_ANALYST_PASSWORD`, and `DEMO_EMPLOYEE_PASSWORD` in the private environment file. Do not commit that file.
+
+## Repository exposure check
+
+Before publishing or submitting, inspect tracked files and the complete Git history for accidental secrets and confidential material. `.env` and local database files are ignored, but ignore rules do not remove files already committed or present in Git history. The former synthetic demo passwords occur in earlier commits; coordinate with the repository owner before any history rewrite, and do not force-push a shared branch without approval. Rotate any real credentials that may have been exposed. A local scan cannot certify that all GitHub history, forks, or repository settings are free of confidential information.
+
+## Contribution clarification
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for a contribution statement template that distinguishes existing project work from changes made for a submission.
 
 ## Project layout
 
 ```text
 backend/   FastAPI application, API routes, services, models, and tests
 frontend/  React dashboard and API client
+docker-compose.yml  Local PostgreSQL + backend + frontend stack
 ```
 
 ## Security note

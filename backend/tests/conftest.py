@@ -1,4 +1,5 @@
 import os
+import secrets
 import sys
 import pytest
 from typing import Generator
@@ -6,6 +7,11 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
+
+# Isolated credentials for the demo accounts created by the application lifespan.
+os.environ.setdefault("DEMO_ADMIN_PASSWORD", secrets.token_urlsafe(18))
+os.environ.setdefault("DEMO_ANALYST_PASSWORD", secrets.token_urlsafe(18))
+os.environ.setdefault("DEMO_EMPLOYEE_PASSWORD", secrets.token_urlsafe(18))
 
 # Add backend directory to sys.path
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

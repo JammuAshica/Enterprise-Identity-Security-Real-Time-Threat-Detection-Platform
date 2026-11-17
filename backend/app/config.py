@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
+    # Local synthetic demo accounts
+    DEMO_ADMIN_PASSWORD: str
+    DEMO_ANALYST_PASSWORD: str
+    DEMO_EMPLOYEE_PASSWORD: str
+
     # Threat Detection Engine
     MAX_FAILED_LOGIN_ATTEMPTS: int = 5
     ACCOUNT_LOCKOUT_DURATION_MINUTES: int = 15
@@ -43,6 +48,30 @@ class Settings(BaseSettings):
         elif isinstance(v, list):
             return v
         return ["*"]
+
+    @field_validator(
+        "DEMO_ADMIN_PASSWORD",
+        "DEMO_ANALYST_PASSWORD",
+        "DEMO_EMPLOYEE_PASSWORD",
+    )
+    def validate_demo_passwords(cls, value: str) -> str:
+        if len(value) < 12 or value.startswith("replace-with-"):
+            raise ValueError(
+                "Demo account passwords must be configured with values of at least "
+                "12 characters in a private environment file."
+            )
+        return value
+
+    @model_validator(mode="after")
+    def validate_demo_passwords_are_distinct(self) -> "Settings":
+        demo_passwords = {
+            self.DEMO_ADMIN_PASSWORD,
+            self.DEMO_ANALYST_PASSWORD,
+            self.DEMO_EMPLOYEE_PASSWORD,
+        }
+        if len(demo_passwords) != 3:
+            raise ValueError("Each demo account must have a different password.")
+        return self
 
     @model_validator(mode="after")
     def validate_security_configuration(self) -> "Settings":

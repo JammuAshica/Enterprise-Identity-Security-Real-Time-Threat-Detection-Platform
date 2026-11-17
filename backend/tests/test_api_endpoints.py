@@ -1,5 +1,8 @@
 import pytest
 from app.models.alert import SecurityAlert
+from app.models.user import User
+from app.config import settings
+from app.core.security import hash_password, verify_password
 
 
 def test_root_and_health(client):
@@ -76,10 +79,20 @@ def test_alerts_acknowledge(client, analyst_headers, db_session):
     assert ack_res.json()["is_acknowledged"] is True
 
 
-def test_synthetic_simulator_endpoints(client):
+def test_synthetic_simulator_endpoints(client, db_session):
     # Seed
     seed_res = client.post("/api/v1/simulator/seed")
     assert seed_res.status_code == 200
+
+    admin = db_session.query(User).filter(User.username == "admin").first()
+    assert admin is not None
+    assert verify_password(settings.DEMO_ADMIN_PASSWORD, admin.hashed_password)
+
+    admin.hashed_password = hash_password("outdated-demo-password")
+    db_session.commit()
+    client.post("/api/v1/simulator/seed")
+    db_session.refresh(admin)
+    assert verify_password(settings.DEMO_ADMIN_PASSWORD, admin.hashed_password)
 
     # Brute force
     bf_res = client.post("/api/v1/simulator/attack/brute-force?target_username=test_employee&attempts=5")

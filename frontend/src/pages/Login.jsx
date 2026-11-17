@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 export const Login = () => {
   const { login } = useAuth();
   const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("REMOVED-SYNTHETIC-DEMO-CREDENTIAL");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -26,9 +26,9 @@ export const Login = () => {
     }
   };
 
-  const handleQuickFill = (u, p) => {
+  const handleQuickFill = (u) => {
     setUsername(u);
-    setPassword(p);
+    setPassword("");
     setError("");
   };
 
@@ -125,12 +125,12 @@ export const Login = () => {
         {/* Quick Role Switchers for Demonstration */}
         <div className="mt-6 pt-5 border-t border-slate-800">
           <p className="text-[11px] font-mono text-slate-400 mb-2 text-center uppercase tracking-wider">
-            Quick-Select Demo Roles
+            Select Demo Account
           </p>
           <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
-              onClick={() => handleQuickFill("admin", "REMOVED-SYNTHETIC-DEMO-CREDENTIAL")}
+              onClick={() => handleQuickFill("admin")}
               className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition"
             >
               <div className="text-[10px] font-bold text-cyan-400">Admin</div>
@@ -138,7 +138,7 @@ export const Login = () => {
             </button>
             <button
               type="button"
-              onClick={() => handleQuickFill("analyst_jane", "REMOVED-SYNTHETIC-DEMO-CREDENTIAL")}
+              onClick={() => handleQuickFill("analyst_jane")}
               className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition"
             >
               <div className="text-[10px] font-bold text-amber-400">SOC Analyst</div>
@@ -146,13 +146,16 @@ export const Login = () => {
             </button>
             <button
               type="button"
-              onClick={() => handleQuickFill("john_doe", "REMOVED-SYNTHETIC-DEMO-CREDENTIAL")}
+              onClick={() => handleQuickFill("john_doe")}
               className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition"
             >
               <div className="text-[10px] font-bold text-slate-300">Employee</div>
               <div className="text-[9px] text-slate-400 font-mono">john_doe</div>
             </button>
           </div>
+          <p className="text-[10px] text-slate-500 text-center mt-2">
+            Enter the password configured for this demo account in your private environment file.
+          </p>
         </div>
       </div>
     </div>
