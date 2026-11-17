@@ -93,7 +93,7 @@ The demo accounts and generated activity are synthetic and are not suitable for 
 
 ## Repository exposure check
 
-Before publishing or submitting, inspect tracked files and the complete Git history for accidental secrets and confidential material. `.env` and local database files are ignored, but ignore rules do not remove files already committed or present in Git history. The former synthetic demo passwords occur in earlier commits; coordinate with the repository owner before any history rewrite, and do not force-push a shared branch without approval. Rotate any real credentials that may have been exposed. A local scan cannot certify that all GitHub history, forks, or repository settings are free of confidential information.
+Before publishing or submitting, inspect tracked files and the complete Git history for accidental secrets and confidential material. `.env` and local database files are ignored, but ignore rules do not remove files already committed or present in Git history. The local `main` history was rewritten to remove the former synthetic demo passwords; the GitHub remote must be updated with an approved force-push for the public branch to receive that rewrite. Existing clones, forks, and hosting caches may retain old commit objects. Rotate any real credentials that may have been exposed. A local scan cannot certify that all GitHub history, forks, or repository settings are free of confidential information.
 
 ## Contribution clarification
 
