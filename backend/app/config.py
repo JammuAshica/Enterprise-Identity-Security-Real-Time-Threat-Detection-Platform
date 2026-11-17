@@ -2,6 +2,7 @@ import secrets
 from typing import List, Union
 from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from sqlalchemy.engine import make_url
 
 
 class Settings(BaseSettings):
@@ -11,8 +12,8 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
 
-    # Database
-    DATABASE_URL: str = "sqlite:///./security_platform.db"
+    # PostgreSQL is required for application and test workloads.
+    DATABASE_URL: str
 
     # JWT Authentication
     JWT_SECRET_KEY: str = secrets.token_urlsafe(32)
@@ -48,6 +49,16 @@ class Settings(BaseSettings):
         elif isinstance(v, list):
             return v
         return ["*"]
+
+    @field_validator("DATABASE_URL")
+    def validate_database_url(cls, value: str) -> str:
+        try:
+            backend = make_url(value).get_backend_name()
+        except Exception as exc:
+            raise ValueError("DATABASE_URL must be a valid PostgreSQL connection URL.") from exc
+        if backend != "postgresql":
+            raise ValueError("DATABASE_URL must use PostgreSQL.")
+        return value
 
     @field_validator(
         "DEMO_ADMIN_PASSWORD",

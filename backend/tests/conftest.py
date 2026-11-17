@@ -6,7 +6,14 @@ from typing import Generator
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
+
+test_database_url = os.environ.get("TEST_DATABASE_URL")
+if not test_database_url:
+    pytest.exit(
+        "TEST_DATABASE_URL must point to a dedicated PostgreSQL test database.",
+        returncode=2,
+    )
+os.environ["DATABASE_URL"] = test_database_url
 
 # Isolated credentials for the demo accounts created by the application lifespan.
 os.environ.setdefault("DEMO_ADMIN_PASSWORD", secrets.token_urlsafe(18))
@@ -25,14 +32,7 @@ from app.core.security import hash_password, create_access_token
 from app.models.session import UserSession
 from datetime import datetime, timedelta
 
-# Test in-memory SQLite database
-TEST_DATABASE_URL = "sqlite:///:memory:"
-
-engine = create_engine(
-    TEST_DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
-)
+engine = create_engine(test_database_url, pool_pre_ping=True)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 

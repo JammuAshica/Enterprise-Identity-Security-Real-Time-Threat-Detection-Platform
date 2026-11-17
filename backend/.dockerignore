@@ -6,5 +6,3 @@ __pycache__/
 htmlcov/
 *.py[cod]
 *.db
-*.sqlite3
-tests/

@@ -13,7 +13,6 @@ env/
 .coverage
 htmlcov/
 *.db
-*.sqlite3
 
 # Node / Frontend
 frontend/node_modules/

@@ -14,7 +14,7 @@ An identity security platform for managing users and access while monitoring sec
 ## Tech stack
 
 - **Backend:** Python, FastAPI, SQLAlchemy, Pydantic
-- **Database:** SQLite for local zero-setup development and tests; PostgreSQL for the Docker Compose deployment.
+- **Database:** PostgreSQL for local development, tests, and Docker Compose deployment.
 - **Frontend:** React, Vite, Tailwind CSS
 - **Containers:** Docker Compose, PostgreSQL, Nginx
 
@@ -27,16 +27,10 @@ An identity security platform for managing users and access while monitoring sec
 
 ### Backend
 
-For local development, create a private backend environment file from the example and replace all placeholders, including the three distinct demo passwords (at least 12 characters each). From the repository root:
+PostgreSQL is required. The simplest setup is Docker Compose below. To run the API directly with Python, start a PostgreSQL server and provide a PostgreSQL `DATABASE_URL` plus the demo passwords through environment variables or `backend/.env`.
 
 ```powershell
-Copy-Item .env.example backend\.env
-notepad backend\.env
-```
-
-Save the file, then change to the `backend` directory and run:
-
-```powershell
+cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -45,7 +39,7 @@ python run.py
 
 The API is available at `http://localhost:8000`. Interactive API documentation is at `http://localhost:8000/docs`, and the health check is at `http://localhost:8000/health`.
 
-The backend uses SQLite by default and creates its database schema on startup. Configuration can be supplied through environment variables or a `backend/.env` file. For deployments outside development, set a secure `JWT_SECRET_KEY` (at least 32 characters) and configure `DATABASE_URL` as needed.
+The backend creates its PostgreSQL database schema on startup. Configuration can be supplied through environment variables or a `backend/.env` file. For deployments outside development, set a secure `JWT_SECRET_KEY` (at least 32 characters) and configure `DATABASE_URL`.
 
 ### Frontend
 
@@ -60,13 +54,13 @@ Vite prints the local frontend URL when it starts. The frontend sends API reques
 
 ## Run backend tests
 
-From the `backend` directory:
+The test configuration reports statement coverage by module and enforces an 80% minimum. Tests require a dedicated PostgreSQL database configured by `TEST_DATABASE_URL`; tests create and drop tables in that database, so never point it at a database containing data you need to keep. Run them using the isolated Compose test profile from the repository root:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest
+docker compose --profile test run --build --rm tests
 ```
 
-The test configuration reports statement coverage by module and enforces an 80% minimum. The test database is an isolated in-memory SQLite database; PostgreSQL is used by the Docker Compose application deployment.
+The test database uses a separate named volume from the application database. Do not use `docker compose down -v` unless you intend to delete both databases. To run pytest directly, set both `DATABASE_URL` and `TEST_DATABASE_URL` to a dedicated PostgreSQL database before running `python -m pytest` from `backend`.
 
 ## Run with Docker Compose (PostgreSQL)
 
@@ -93,7 +87,7 @@ The demo accounts and generated activity are synthetic and are not suitable for 
 
 ## Repository exposure check
 
-Before publishing or submitting, inspect tracked files and the complete Git history for accidental secrets and confidential material. `.env` and local database files are ignored, but ignore rules do not remove files already committed or present in Git history. The local `main` history was rewritten to remove the former synthetic demo passwords; the GitHub remote must be updated with an approved force-push for the public branch to receive that rewrite. Existing clones, forks, and hosting caches may retain old commit objects. Rotate any real credentials that may have been exposed. A local scan cannot certify that all GitHub history, forks, or repository settings are free of confidential information.
+Before publishing or submitting, inspect tracked files and the complete Git history for accidental secrets and confidential material. `.env` and local database files are ignored, but ignore rules do not remove files already committed or present in Git history. The `main` history was rewritten to remove the former synthetic demo passwords and use the GitHub account identity for commit attribution. Existing clones, forks, and hosting caches may retain old commit objects. Rotate any real credentials that may have been exposed. A local scan cannot certify that all GitHub history, forks, or repository settings are free of confidential information.
 
 ## Contribution clarification
 
