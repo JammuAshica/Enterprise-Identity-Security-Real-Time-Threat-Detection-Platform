@@ -64,7 +64,7 @@ The test database uses a separate named volume from the application database. Do
 
 ## Run with Docker Compose (PostgreSQL)
 
-Install Docker Desktop, then from the repository root copy `.env.example` to `.env` and replace every placeholder. Set a PostgreSQL password and JWT secret, plus three distinct demo-account passwords of at least 12 characters each. Use URL-safe letters and digits for the PostgreSQL password because it is embedded in `DATABASE_URL`. Keep `.env` private and do not commit it.
+Install Docker Desktop, then from the repository root copy `.env.example` to `.env` and replace every placeholder. Set a PostgreSQL password and JWT secret, plus four distinct demo-account passwords of at least 12 characters each. The accounts are `admin`, `analyst_jane`, `john_doe`, and `sarah_connor`; each has a separate password. Use URL-safe letters and digits for the PostgreSQL password because it is embedded in `DATABASE_URL`. Keep `.env` private and do not commit it.
 
 ```powershell
 Copy-Item .env.example .env
@@ -83,7 +83,7 @@ To stop the services while retaining database data, press `Ctrl+C` and run `dock
 4. Review the generated security events, alerts, and incidents in the dashboard and incident pages.
 5. Test session management by signing out, signing back in, and using the session list/revocation controls.
 
-The demo accounts and generated activity are synthetic and are not suitable for real accounts or production use. Configure three distinct passwords of at least 12 characters using `DEMO_ADMIN_PASSWORD`, `DEMO_ANALYST_PASSWORD`, and `DEMO_EMPLOYEE_PASSWORD` in the private environment file. Do not commit that file.
+The demo accounts and generated activity are synthetic and are not suitable for real accounts or production use. Configure four distinct passwords of at least 12 characters using `DEMO_ADMIN_PASSWORD`, `DEMO_ANALYST_PASSWORD`, `DEMO_EMPLOYEE_PASSWORD`, and `DEMO_SARAH_PASSWORD` in the private environment file. Do not commit that file.
 
 ## Repository exposure check
 
@@ -91,7 +91,7 @@ Before publishing or submitting, inspect tracked files and the complete Git hist
 
 ## Contribution clarification
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for a contribution statement template that distinguishes existing project work from changes made for a submission.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) and [PROJECT_REPORT.md](./PROJECT_REPORT.md) for the contribution attribution, AI-assistance disclosure, and verification status.
 
 ## Project layout
 

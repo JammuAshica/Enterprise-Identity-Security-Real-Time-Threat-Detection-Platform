@@ -1,22 +1,9 @@
-# Contribution clarification
+# Contribution and attribution
 
-Use this statement in a submission and edit it to accurately reflect the work performed:
+The [project report](./PROJECT_REPORT.md) records the current contribution attribution, AI-assistance disclosure, pre-existing application components, credential review, and verification status.
 
-> The existing repository provides the core identity-security application, including its FastAPI API, React dashboard, authentication/RBAC/session features, threat rules, incident workflows, and initial tests. For this update, I added/updated: [list only changes you personally made and verified]. The seeded users and event data are synthetic demonstration data; demo passwords are configured locally through a private environment file and are not committed. Original authorship and third-party contributions should be credited according to the repository history and applicable licenses.
+The Git history attributes ten commits from 11–17 November 2026 to JammuAshica. Those commits cover the initial application, authentication and authorization, threat-detection and incident workflows, React dashboard, deployment configuration, tests, and documentation. This identifies the repository's commit attribution; it is not independent proof of who performed each part of the work.
 
-Do not claim authorship of pre-existing code. Include the test command and actual result from your own run, rather than reporting a target as a result. For a live demonstration, show successful login, role-based access behavior, one simulated threat, its resulting alert/incident, and session revocation.
+Earlier project documentation identifies the Docker deployment, same-origin frontend API configuration, demo-password environment migration, test-coverage configuration, and related documentation as AI-assisted work. The current credential separation and report/test updates also used AI assistance. The submitter should disclose assistance accurately and review and verify all changes they submit.
 
-## Local checks
-
-From `backend`:
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest
-```
-
-From `frontend`:
-
-```powershell
-npm ci
-npm run build
-```
+Do not claim pre-existing files as changes made for a later update. The current runtime verification and its limitations are recorded in [PROJECT_REPORT.md](./PROJECT_REPORT.md).
