@@ -54,7 +54,7 @@ class SyntheticSecuritySimulator:
                 "full_name": "Sarah Connor",
                 "department": "Infrastructure & Cloud",
                 "role": UserRole.EMPLOYEE,
-                "password": settings.DEMO_EMPLOYEE_PASSWORD,
+                "password": settings.DEMO_SARAH_PASSWORD,
             },
         ]
 

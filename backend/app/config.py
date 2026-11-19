@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     DEMO_ADMIN_PASSWORD: str
     DEMO_ANALYST_PASSWORD: str
     DEMO_EMPLOYEE_PASSWORD: str
+    DEMO_SARAH_PASSWORD: str
 
     # Threat Detection Engine
     MAX_FAILED_LOGIN_ATTEMPTS: int = 5
@@ -64,6 +65,7 @@ class Settings(BaseSettings):
         "DEMO_ADMIN_PASSWORD",
         "DEMO_ANALYST_PASSWORD",
         "DEMO_EMPLOYEE_PASSWORD",
+        "DEMO_SARAH_PASSWORD",
     )
     def validate_demo_passwords(cls, value: str) -> str:
         if len(value) < 12 or value.startswith("replace-with-"):
@@ -79,8 +81,9 @@ class Settings(BaseSettings):
             self.DEMO_ADMIN_PASSWORD,
             self.DEMO_ANALYST_PASSWORD,
             self.DEMO_EMPLOYEE_PASSWORD,
+            self.DEMO_SARAH_PASSWORD,
         }
-        if len(demo_passwords) != 3:
+        if len(demo_passwords) != 4:
             raise ValueError("Each demo account must have a different password.")
         return self
 
