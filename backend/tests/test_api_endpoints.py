@@ -1,8 +1,20 @@
 import pytest
+from pydantic import ValidationError
 from app.models.alert import SecurityAlert
 from app.models.user import User
-from app.config import settings
+from app.config import Settings, settings
 from app.core.security import hash_password, verify_password
+
+
+def test_demo_account_passwords_must_be_unique():
+    with pytest.raises(ValidationError, match="Each demo account must have a different password"):
+        Settings(
+            DATABASE_URL="postgresql://test:test@localhost/security_platform",
+            DEMO_ADMIN_PASSWORD="unique-admin-password",
+            DEMO_ANALYST_PASSWORD="unique-analyst-password",
+            DEMO_EMPLOYEE_PASSWORD="unique-employee-password",
+            DEMO_SARAH_PASSWORD="unique-admin-password",
+        )
 
 
 def test_root_and_health(client):
@@ -87,6 +99,18 @@ def test_synthetic_simulator_endpoints(client, db_session):
     admin = db_session.query(User).filter(User.username == "admin").first()
     assert admin is not None
     assert verify_password(settings.DEMO_ADMIN_PASSWORD, admin.hashed_password)
+
+    demo_accounts = [
+        ("admin", settings.DEMO_ADMIN_PASSWORD),
+        ("analyst_jane", settings.DEMO_ANALYST_PASSWORD),
+        ("john_doe", settings.DEMO_EMPLOYEE_PASSWORD),
+        ("sarah_connor", settings.DEMO_SARAH_PASSWORD),
+    ]
+    assert len({password for _, password in demo_accounts}) == len(demo_accounts)
+    for username, password in demo_accounts:
+        user = db_session.query(User).filter(User.username == username).first()
+        assert user is not None
+        assert verify_password(password, user.hashed_password)
 
     admin.hashed_password = hash_password("outdated-demo-password")
     db_session.commit()

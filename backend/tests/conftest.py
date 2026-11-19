@@ -19,6 +19,7 @@ os.environ["DATABASE_URL"] = test_database_url
 os.environ.setdefault("DEMO_ADMIN_PASSWORD", secrets.token_urlsafe(18))
 os.environ.setdefault("DEMO_ANALYST_PASSWORD", secrets.token_urlsafe(18))
 os.environ.setdefault("DEMO_EMPLOYEE_PASSWORD", secrets.token_urlsafe(18))
+os.environ.setdefault("DEMO_SARAH_PASSWORD", secrets.token_urlsafe(18))
 
 # Add backend directory to sys.path
 backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
